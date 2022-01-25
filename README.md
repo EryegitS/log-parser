@@ -3,10 +3,12 @@
 ### Flow
 
 The application should find all the log messages with the level error and print them into the output file. Formats of input and outfit files are described below.
-
-* reads the log file that is flagged as input,
-* Processes only the logs that is error level
-* Parse and write the results to the json file that is flagged as output.
+* get log file location by parsing input flag (process argv)
+* get output file location by parsing input flag (process argv)
+* reads the log file line by line as **ReadStream**,
+* Parse and convert to Log object.
+* Publish selected log level(s) with observers. (Log level is dynamically changeable by updating filter.)
+* **Json Exporter** which is one of observer of **Log Reader** will export logs in JSON format.
 ---
 ### Input Format
 
@@ -25,7 +27,7 @@ The application should find all the log messages with the level error and print 
 ### Configuration
 Before start program you have to add flags to script that is for running the application
 
-|       Flag        | Default | Description                   |
+|       Flag        | Example | Description                   |
 |-------------------|---------|-------------------------------|
 | `--input`         |./app.log| log file that will be parsed     |
 | `--output`        |./errors.json| json file that is created after process  |
@@ -36,7 +38,14 @@ install all dependencies via npm
 npm install
 ```
 
+###### Build Script
+build the app
+```shell
+npm run build
+```
+
+###### Run Script
 after installation ready to run program.
 ```shell
-rimraf dist && tsc && node dist/parser.js --input ./test.log --output ./errors.json
+node dist/src/parser.js --input ./app.log --output ./errors.json
 ```

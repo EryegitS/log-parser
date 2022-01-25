@@ -21,7 +21,6 @@ export class JsonExporter extends Exporter {
         this.addOpeningElement();
         break;
       case ObserverEvents.END:
-        this.writeStream.destroy();
         this.addClosureElement();
         break;
       case ObserverEvents.ERROR:
