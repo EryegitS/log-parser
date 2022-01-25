@@ -1,6 +1,6 @@
 import Observer from '../models/observer';
 
-export class Consumer implements Observer {
+export class Exporter implements Observer {
   messages: string[] = [];
 
   public consume(message: string) {

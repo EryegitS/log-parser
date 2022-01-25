@@ -4,15 +4,14 @@ import { Log, LogLevels } from '../../src/models/log';
 import { ParsingDateException } from '../../src/exceptions/parsing-date-exception';
 import { ParsingLogLevelException } from '../../src/exceptions/parsing-log-level-exception';
 import { ParsingTransactionDetailException } from '../../src/exceptions/parsing-transaction-detail-exception';
-import { DelimiterException } from '../../src/exceptions/delimiter-exception';
-import { Consumer } from '../../src/consumers/consumer';
+import { RegexException } from '../../src/exceptions/regex-exception';
+import { Exporter } from '../../src/exporters/exporter';
 import { ObserverEvents } from '../../src/models/observer-events';
 import * as fs from 'fs';
 
 describe('Log File features unit tests', () => {
-  const delimiter = ' - ';
   const config = new Config();
-  const reader = new LogFileReader(config, delimiter);
+  const logFileReader = new LogFileReader(config);
 
   const path = './test.log';
   const errorLog =
@@ -22,7 +21,7 @@ describe('Log File features unit tests', () => {
 
   it('should filter and emit error log to observers', async () => {
     // given
-    const observer = new Consumer();
+    const observer = new Exporter();
 
     // when
     const data = errorLog + '\n' + debugLog;
@@ -30,8 +29,8 @@ describe('Log File features unit tests', () => {
     // writeStream.write(errorLog);
     // writeStream.write('\n' + debugLog);
 
-    reader.subscribe(observer);
-    reader.read(path, [LogLevels.ERROR]);
+    logFileReader.subscribe(observer);
+    logFileReader.read(path, [LogLevels.ERROR]);
 
     // then
     console.log(observer.messages[1]);
@@ -41,7 +40,7 @@ describe('Log File features unit tests', () => {
       '9abc55b2-807b-4361-9dbe-aa88b1b2e978',
     );
     expect(parsedLog.timestamp).toBe(
-      new Date(errorLog.split(delimiter)[0]).getTime(),
+      new Date(errorLog.split(' - ')[0]).getTime(),
     );
 
     expect(observer.messages[0]).toBe(ObserverEvents.START);
@@ -54,7 +53,7 @@ describe('Log File features unit tests', () => {
     // when
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    const log: Log = reader.parse(Buffer.from(errorLog));
+    const log: Log = LogFileReader.parse(Buffer.from(errorLog));
 
     // then
     expect(log.loglevel).toBe('error');
@@ -65,9 +64,15 @@ describe('Log File features unit tests', () => {
 
   it('should throw error if log format is not proper', () => {
     // given
-    const log1 = errorLog.split(delimiter);
-    const log2 = errorLog.split(delimiter);
-    const log3 = errorLog.split(delimiter);
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    const log1 = LogFileReader.parse(Buffer.from(errorLog));
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    const log2 = LogFileReader.parse(Buffer.from(errorLog));
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    const log3 = LogFileReader.parse(Buffer.from(errorLog));
     const log4 = [];
 
     // when
@@ -79,22 +84,22 @@ describe('Log File features unit tests', () => {
     expect(() => {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
-      reader.validation(log1);
+      logFileReader.convertToLog(log1);
     }).toThrow(ParsingDateException);
     expect(() => {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
-      reader.validation(log2);
+      logFileReader.convertToLog(log2);
     }).toThrow(ParsingLogLevelException);
     expect(() => {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
-      reader.validation(log3);
+      logFileReader.convertToLog(log3);
     }).toThrow(ParsingTransactionDetailException);
     expect(() => {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
-      reader.validation(log4);
-    }).toThrow(DelimiterException);
+      logFileReader.convertToLog(log4);
+    }).toThrow(RegexException);
   });
 });
