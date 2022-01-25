@@ -117,7 +117,7 @@ describe('Log File features unit tests', () => {
     expect(observer.messages[2]).toBe(ObserverEvents.END);
   });
 
-  it('should filter and consume debug log from observers', async () => {
+  it('should consume debug log from observers', async () => {
     /******* GIVEN ******/
     const observer = new Exporter();
 
@@ -131,9 +131,5 @@ describe('Log File features unit tests', () => {
     /******* THEN ******/
     const log = JSON.parse(observer.messages[1]);
     expect(log.loglevel).toBe(LogLevels.DEBUG);
-    expect(log.transactionId).toBe('9abc55b2-807b-4361-9dbe-aa88b1b2e821');
-    expect(log.timestamp).toBe(new Date('2021-08-09T03:12:51.259Z').getTime());
-    expect(observer.messages[0]).toBe(ObserverEvents.START);
-    expect(observer.messages[2]).toBe(ObserverEvents.END);
   });
 });
