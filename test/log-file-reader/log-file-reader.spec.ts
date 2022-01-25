@@ -32,7 +32,7 @@ describe('Log File features unit tests', () => {
     const logParts: string[] = LogFileReader.parse(Buffer.from(errorLog));
 
     /******* THEN ******/
-    logParts.forEach((part,i) => {
+    logParts.forEach((part, i) => {
       expect(logParts[i]).toBe(parsedLog[i]);
     });
   });

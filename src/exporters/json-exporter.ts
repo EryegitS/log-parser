@@ -6,7 +6,7 @@ import { Exporter } from './exporter';
 export class JsonExporter extends Exporter {
   private writeStream: WriteStream;
   firstElementInserted: boolean;
-  path: string
+  path: string;
 
   constructor(path = 'output.json') {
     super();
