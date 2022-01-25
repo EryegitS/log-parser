@@ -8,7 +8,7 @@ The application should find all the log messages with the level error and print 
 * reads the log file line by line as **ReadStream**,
 * Parse and convert to Log object.
 * Publish selected log level(s) with observers. (Log level is dynamically changeable by updating filter.)
-* **Json Exporter** which is one of observer of **Log Reader** will export logs in JSON format.
+* **Json Exporter** which is one of observer of **Log Reader** will export logs in JSON format as **WriteStream**.
 ---
 ### Input Format
 
